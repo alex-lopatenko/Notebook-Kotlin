@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 class MainActivity : AppCompatActivity() {
 
     val myDbManager = MyDbManager(this)
-    val myAdapter = MyAdapter(ArrayList())
+    val myAdapter = MyAdapter(ArrayList(), this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun fillAdapter(){
-        myAdapter.updateAdapter(myDbManager.readDbData())
+        val tvNoElements = findViewById<TextView>(R.id.tvNoElements)
+
+        val list = myDbManager.readDbData()
+        myAdapter.updateAdapter(list)
+        if (list.size > 0) {
+            tvNoElements.visibility = View.GONE
+        } else {
+            tvNoElements.visibility = View.VISIBLE
+        }
     }
 
 }
