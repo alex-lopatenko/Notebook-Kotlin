@@ -3,6 +3,7 @@ package android.example.sqlitekotlin.db
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.provider.BaseColumns
 
 class MyDbManager(context: Context) {
     var myDbHelper = MyDbHelper(context)
@@ -14,11 +15,17 @@ class MyDbManager(context: Context) {
 
     fun insertToDb(title: String, content: String, uri: String) {
         val values = ContentValues().apply {
+
             put(MyDbNameClass.COLUMN_NAME_TITLE, title)
             put(MyDbNameClass.COLUMN_NAME_CONTENT, content)
             put(MyDbNameClass.COLUMN_NAME_IMAGE_URI, uri)
         }
         db?.insert(MyDbNameClass.TABLE_NAME, null, values)
+    }
+
+    fun removeItemFromDb(id: String) {
+       val selection = BaseColumns._ID + "=$id"
+        db?.delete(MyDbNameClass.TABLE_NAME, selection, null)
     }
 
     fun readDbData(): ArrayList<ListItem> {
@@ -34,10 +41,13 @@ class MyDbManager(context: Context) {
                 cursor.getString(cursor.getColumnIndex(MyDbNameClass.COLUMN_NAME_CONTENT))
             val dataUri =
                 cursor.getString(cursor.getColumnIndex(MyDbNameClass.COLUMN_NAME_IMAGE_URI))
+            val dataId =
+                cursor.getInt(cursor.getColumnIndex(BaseColumns._ID))
             val item = ListItem()
             item.title = dataTitle
             item.desc = dataContent
             item.uri = dataUri
+            item.id = dataId
             dataList.add(item)
         }
         cursor.close()

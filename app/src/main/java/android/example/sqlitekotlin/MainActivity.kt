@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -34,18 +35,20 @@ class MainActivity : AppCompatActivity() {
         fillAdapter()
     }
 
-    fun onClickNew(view: View){
+    fun onClickNew(view: View) {
         val i = Intent(this, EditActivity::class.java)
         startActivity(i)
     }
 
-    fun init(){
+    fun init() {
         val rcView = findViewById<RecyclerView>(R.id.rcView)
         rcView.layoutManager = LinearLayoutManager(this)
+        val swapHelper = getSwapMg()
+        swapHelper.attachToRecyclerView(rcView)
         rcView.adapter = myAdapter
     }
 
-    fun fillAdapter(){
+    fun fillAdapter() {
         val tvNoElements = findViewById<TextView>(R.id.tvNoElements)
 
         val list = myDbManager.readDbData()
@@ -55,6 +58,23 @@ class MainActivity : AppCompatActivity() {
         } else {
             tvNoElements.visibility = View.VISIBLE
         }
+    }
+
+    private fun getSwapMg(): ItemTouchHelper {
+        return ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                myAdapter.removeItem(viewHolder.adapterPosition, myDbManager)
+            }
+        })
     }
 
 }

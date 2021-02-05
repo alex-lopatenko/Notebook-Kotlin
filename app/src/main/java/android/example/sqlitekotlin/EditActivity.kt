@@ -52,6 +52,7 @@ class EditActivity : AppCompatActivity() {
 
             imMainImage.setImageURI(data?.data)
             tempImageUri = data?.data.toString()
+            contentResolver.takePersistableUriPermission(data?.data!!, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
     }
@@ -69,7 +70,6 @@ class EditActivity : AppCompatActivity() {
     fun onClickChooseImage(view: View) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.type = "image/*"
-        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         startActivityForResult(intent, imageRequestCode)
     }
 
