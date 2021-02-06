@@ -5,13 +5,13 @@ import android.example.sqlitekotlin.db.MyAdapter
 import android.example.sqlitekotlin.db.MyDbManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.SearchView
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         init()
+        initSearchView()
     }
 
     override fun onDestroy() {
@@ -41,17 +42,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun init() {
-        val rcView = findViewById<RecyclerView>(R.id.rcView)
         rcView.layoutManager = LinearLayoutManager(this)
         val swapHelper = getSwapMg()
         swapHelper.attachToRecyclerView(rcView)
         rcView.adapter = myAdapter
     }
 
-    fun fillAdapter() {
-        val tvNoElements = findViewById<TextView>(R.id.tvNoElements)
+    private fun initSearchView(){
+        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
 
-        val list = myDbManager.readDbData()
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val list = myDbManager.readDbData(newText!!)
+                myAdapter.updateAdapter(list)
+                return true
+            }
+        })
+    }
+
+    fun fillAdapter() {
+        val list = myDbManager.readDbData("")
         myAdapter.updateAdapter(list)
         if (list.size > 0) {
             tvNoElements.visibility = View.GONE

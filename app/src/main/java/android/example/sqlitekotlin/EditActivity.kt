@@ -14,6 +14,7 @@ import android.widget.ImageView
 import androidx.constraintlayout.solver.state.State
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.edit_activity.*
 
 class EditActivity : AppCompatActivity() {
 
